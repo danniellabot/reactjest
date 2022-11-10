@@ -23,62 +23,59 @@ import Typography from "@mui/material/Typography";
 import { useGlobalState, useDispatch } from "../../../context/Provider";
 
 export default function Experience() {
-    const [show, setShow] = React.useState(false);
-    const state = useGlobalState();
-    const dispatch = useDispatch();
-    const [value, setValue] = React.useState(state.experience);
-    
-    const handleClick = () => {
-        setShow(true);
-    };
-    
-    const handleClose = () => {
-        setShow(false);
-    };
-    
-    const handleClickSave = () => {
-        dispatch({ type: "UPDATE_EXPERIENCE", payload: value });
-        setShow(false);
-    };
-    
-    const handleClickCancel = () => {
-        setShow(false);
-    };
-    
-    return (
-        <div>
-        <Typography
-            data-testid="experience-label"
-            variant="h5"
-            component="h2"
-            onClick={handleClick}
-        >
-            {state.experience}
-        </Typography>
-        <Dialog open={show} onClose={handleClose}
-        fullWidth={true}
-        >
-            <DialogTitle>Experience</DialogTitle>
-            <DialogContent>
-            <Autocomplete
-                value={value}
-                onChange={(event, newValue) => {
-                setValue(newValue);
-                }}
-                options={["Beginner", "Intermediate", "Advanced"]}
-                renderInput={(params) => <TextField {...params} />}
-            />
-            </DialogContent>
-            <DialogActions>
-            <Button
-            data-testid="save-button" 
-            onClick={handleClickSave}>Save</Button>
-            <Button
-            data-testid="cancel-button"
-             onClick={handleClickCancel}>Cancel</Button>
-            </DialogActions>
-        </Dialog>
-        </div>
-    );
-    }
+  const [show, setShow] = React.useState(false);
+  const state = useGlobalState();
+  const dispatch = useDispatch();
+  const [value, setValue] = React.useState(state.experience);
 
+  const handleClick = () => {
+    setShow(true);
+  };
+
+  const handleClose = () => {
+    setShow(false);
+  };
+
+  const handleClickSave = () => {
+    dispatch({ type: "UPDATE_EXPERIENCE", payload: value });
+    setShow(false);
+  };
+
+  const handleClickCancel = () => {
+    setShow(false);
+  };
+
+  return (
+    <div>
+      <Typography
+        data-testid="experience-label"
+        variant="h5"
+        component="h2"
+        onClick={handleClick}
+      >
+        {state.experience}
+      </Typography>
+      <Dialog open={show} onClose={handleClose} fullWidth={true}>
+        <DialogTitle>Experience</DialogTitle>
+        <DialogContent>
+          <Autocomplete
+            value={value}
+            onChange={(event, newValue) => {
+              setValue(newValue);
+            }}
+            options={["Beginner", "Intermediate", "Advanced"]}
+            renderInput={(params) => <TextField {...params} />}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button data-testid="save-button" onClick={handleClickSave}>
+            Save
+          </Button>
+          <Button data-testid="cancel-button" onClick={handleClickCancel}>
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
+  );
+}

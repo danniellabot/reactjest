@@ -79,3 +79,32 @@ test("selecting a experience from the dropdown menu updates the experience", () 
   fireEvent.click(saveButtonElement);
   expect(headingElement).toHaveTextContent("Intermediate");
 });
+
+/**
+ * onClick Typography, setShow(true), show Dialog with DialogTitle, DialogContent, DialogActions
+ * Click the "Cancel" button
+ * Check that the Dialog should not be visible
+ * Check that setShow(false) should be called
+ */
+
+test("clicking the cancel button closes the experience dialog", () => {
+    render(
+        <Provider>
+        <Experience />
+        </Provider>
+    );
+    
+    const headingElement = screen.getByRole("heading");
+    fireEvent.click(headingElement);
+    const cancelButtonElement = screen.getByRole("button", {
+        name: "Cancel",
+        hidden: false,
+    });
+    fireEvent.click(cancelButtonElement);
+    expect(cancelButtonElement).not.toBeVisible();
+    expect(headingElement).toBeInTheDocument();
+    });
+
+
+
+
