@@ -4,8 +4,10 @@ import EducationLevel from "./components/organisms/EducationLevel";
 import { Typography } from "@mui/material";
 import { Provider } from "./context/Provider";
 import Experience from "./components/organisms/Experience";
+import { DropdownDialog } from "./components/organisms/DropdownDialog";
 
 function App() {
+  const options = ["Beginner", "Intermediate", "Advanced"];
   return (
     <>
       {/* <div className="App">
@@ -26,9 +28,10 @@ function App() {
   
     </div> */}
       <Provider>
-      <Typography>education level</Typography>
-      <EducationLevel />
-      <Experience />
+        <Typography>education level</Typography>
+        <EducationLevel />
+        <Experience />
+        <DropdownDialog options={options} />
       </Provider>
     </>
   );

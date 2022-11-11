@@ -1,51 +1,126 @@
 /**
- * Unit test for DropdownDialog component
+ * Unit tests for the DropdownDialog component.
  */
 
-import * as React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { DropdownDialog } from "./index";
+import { Provider } from "../../../context/Provider";
 
-describe("DropdownDialog component", () => {
-  it("should render the DropdownDialog component", () => {
+describe("DropdownDialog", () => {
+  it("renders the component", () => {
     render(
-      <DropdownDialog
-        open={true}
-        onClose={() => {}}
-        title={"Title"}
-        description={"Description"}
-        options={["Option 1", "Option 2"]}
-        value={""}
-        onChange={() => {}}
-        onClickSave={() => {}}
-      />
+      <Provider>
+        <DropdownDialog />
+      </Provider>
     );
-
-    expect(screen.getByRole("combobox")).toBeInTheDocument();
+    const headingElement = screen.getByRole("heading");
+    expect(headingElement).toBeInTheDocument();
+    expect(headingElement).toHaveTextContent("Beginner");
   });
 
-  it("should call onChange when clicking on an option", () => {
-    const onChange = jest.fn();
+  it("clicking the experience label shows the dialog and contents", () => {
     render(
-      <DropdownDialog
-        open={true}
-        onClose={() => {}}
-        title={"Title"}
-        description={"Description"}
-        options={["Option 1", "Option 2"]}
-        value={""}
-        onChange={onChange}
-        onClickSave={() => {}}
-      />
+      <Provider>
+        <DropdownDialog />
+      </Provider>
     );
+    const labelElement = screen.getByTestId("experience-label");
+    fireEvent.click(labelElement);
+    const dialogTitleElement = screen.getByRole("heading");
+    expect(dialogTitleElement).toBeInTheDocument();
+    expect(dialogTitleElement).toHaveTextContent("Experience");
+    const dialogContentElement = screen.getByRole("combobox");
+    expect(dialogContentElement).toBeInTheDocument();
+    const saveButtonElement = screen.getByRole("button", {
+      name: "Save",
+      hidden: false,
+    });
+    expect(saveButtonElement).toBeInTheDocument();
+    const cancelButtonElement = screen.getByRole("button", {
+      name: "Cancel",
+      hidden: false,
+    });
+    expect(cancelButtonElement).toBeInTheDocument();
+  });
 
-    const combobox = screen.getByRole("combobox");
-    fireEvent.change(combobox, { target: { value: "Option 1" } });
-    fireEvent.keyDown(combobox, { key: "ArrowDown" });
-    fireEvent.keyDown(combobox, { key: "Enter" });
+  /**
+   * Test that the dropdown menu value changes when the user selects a different option.
+   * When click the save button, the value of the dropdown menu should be different from the initial value.
+   */
 
-    expect(onChange).toHaveBeenCalled();
+  it("clicking the save button changes the dropdown menu value", () => {
+    const mockOptions = ["Beginner", "Intermediate", "Advanced"];
+    render(
+      <Provider>
+        <DropdownDialog options={mockOptions} />
+      </Provider>
+    );
+    const labelElement = screen.getByTestId("experience-label");
+    fireEvent.click(labelElement);
+    const dialogContentElement = screen.getByRole("combobox");
+    fireEvent.change(dialogContentElement, {
+      target: { value: "Intermediate" },
+    });
+    fireEvent.keyDown(dialogContentElement, { key: "ArrowDown" });
+    fireEvent.keyDown(dialogContentElement, { key: "Enter" });
+    expect(dialogContentElement.value).toBe("Intermediate");
+    const saveButtonElement = screen.getByRole("button", {
+      name: "Save",
+      hidden: false,
+    });
+    fireEvent.click(saveButtonElement);
+    expect(labelElement).toHaveTextContent("Intermediate");
+  });
+
+  /**
+   * Test that the dropdown menu value does not change when the user clicks the cancel button.
+   */
+
+  it("clicking the cancel button does not change the dropdown menu value", () => {
+    const mockOptions = ["Beginner", "Intermediate", "Advanced"];
+    render(
+      <Provider>
+        <DropdownDialog options={mockOptions} />
+      </Provider>
+    );
+    const labelElement = screen.getByTestId("experience-label");
+    fireEvent.click(labelElement);
+    const dialogContentElement = screen.getByRole("combobox");
+    fireEvent.change(dialogContentElement, {
+      target: { value: "Intermediate" },
+    });
+    fireEvent.keyDown(dialogContentElement, { key: "ArrowDown" });
+    fireEvent.keyDown(dialogContentElement, { key: "Enter" });
+    expect(dialogContentElement.value).toBe("Intermediate");
+    const cancelButtonElement = screen.getByRole("button", {
+      name: "Cancel",
+      hidden: false,
+    });
+    fireEvent.click(cancelButtonElement);
+    expect(labelElement).toHaveTextContent("Beginner");
+  });
+
+  /**
+   * Test that the dropdown menu value does not change when the user clicks outside the dialog.
+   */
+
+  it("clicking outside the dialog does not change the dropdown menu value", () => {
+    const mockOptions = ["Beginner", "Intermediate", "Advanced"];
+    render(
+      <Provider>
+        <DropdownDialog options={mockOptions} />
+      </Provider>
+    );
+    const labelElement = screen.getByTestId("experience-label");
+    fireEvent.click(labelElement);
+    const dialogContentElement = screen.getByRole("combobox");
+    fireEvent.change(dialogContentElement, {
+      target: { value: "Intermediate" },
+    });
+    fireEvent.keyDown(dialogContentElement, { key: "ArrowDown" });
+    fireEvent.keyDown(dialogContentElement, { key: "Enter" });
+    expect(dialogContentElement.value).toBe("Intermediate");
+    fireEvent.click(screen.getByRole("dialog"));
+    expect(labelElement).toHaveTextContent("Beginner");
   });
 });
-
-// The test for the DropdownDialog component is very similar to the test for the Autocomplete component. The only difference is that we are passing the open prop to the DropdownDialog component. This is because the Dialog component is only rendered when the open prop is true.

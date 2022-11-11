@@ -38,7 +38,9 @@ export const DialogComponent = (props) => {
 
 
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog open={open} onClose={onClose}
+    fullWidth={true}>
+    
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
         <Typography>{description}</Typography>

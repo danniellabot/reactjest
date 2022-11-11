@@ -3,35 +3,60 @@
  */
 
 import * as React from "react";
+import Typography from "@mui/material/Typography";
 import { DialogComponent } from "../Dialog";
 import { AutoComplete } from "../Autocomplete";
+import { useGlobalState, useDispatch } from "../../../context/Provider";
 
 export const DropdownDialog = (props) => {
-  const {
-    open,
-    onClose,
-    title,
-    description,
-    options,
-    value,
-    onChange,
-    onClickSave,
-  } = props;
+  const [show, setShow] = React.useState(false);
+  const [value, setValue] = React.useState("");
+  const { experience } = useGlobalState();
+  const dispatch = useDispatch();
+
+  const { options } = props;
+
+  const handleClick = () => {
+    setShow(true);
+  };
+
+  const handleClose = () => {
+    setShow(false);
+  };
+
+  const handleClickSave = () => {
+    dispatch({ type: "UPDATE_EXPERIENCE", payload: value });
+    setShow(false);
+  };
+
+  const onChange = (value) => {
+    setValue(value);
+  };
 
   return (
-    <DialogComponent
-      open={open}
-      onClose={onClose}
-      title={title}
-      description={description}
-      onClickSave={onClickSave}
-    >
-      <AutoComplete
-        value={value}
-        onChange={onChange}
-        options={options}
-        freeSolo
-      />
-    </DialogComponent>
+    <div>
+      <Typography
+        data-testid="experience-label"
+        variant="h5"
+        component="h2"
+        onClick={handleClick}
+      >
+        {experience}
+      </Typography>
+      <DialogComponent
+        open={show}
+        onClose={handleClose}
+        title="Experience"
+        description="Please select your experience level 22"
+        onClickSave={handleClickSave}
+      >
+        <AutoComplete
+          value={experience}
+          onChange={onChange}
+          options={options}
+          freeSolo
+        />
+      </DialogComponent>
+    </div>
   );
 };
