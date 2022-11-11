@@ -9,7 +9,7 @@ const initialState = {
     experience: 'Beginner'
 };
 
-const reducer = (state, action) => {
+export const reducer = (state, action) => {
     switch (action.type) {
         case 'UPDATE_EDUCATION_LEVEL':
             console.log('educationLevel', action.payload);
