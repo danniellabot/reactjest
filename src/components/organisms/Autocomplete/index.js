@@ -10,6 +10,7 @@
  */
 
 import * as React from "react";
+import PropTypes from "prop-types";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 
@@ -28,3 +29,16 @@ export const AutoComplete = (props) => {
     />
   );
 };
+
+/**
+ * Prop Types
+ */
+
+AutoComplete.propTypes = {
+  freeSolo: PropTypes.bool,
+  value: PropTypes.string,
+  onChange: PropTypes.func,
+  options: PropTypes.array.isRequired,
+};
+
+

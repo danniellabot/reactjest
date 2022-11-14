@@ -3,6 +3,7 @@
  */
 
 import * as React from "react";
+import PropTypes from "prop-types";
 import Typography from "@mui/material/Typography";
 import { DialogComponent } from "../Dialog";
 import { AutoComplete } from "../Autocomplete";
@@ -60,3 +61,12 @@ export const DropdownDialog = (props) => {
     </div>
   );
 };
+
+/**
+ * Prop Types
+ */
+
+DropdownDialog.propTypes = {
+  options: PropTypes.array.isRequired,
+};
+

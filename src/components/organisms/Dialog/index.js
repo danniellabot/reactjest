@@ -14,6 +14,7 @@
  */
 
 import * as React from "react";
+import PropTypes from "prop-types";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -53,4 +54,18 @@ export const DialogComponent = (props) => {
     </Dialog>
   );
 };
+
+/**
+ * Prop Types
+  */
+
+DialogComponent.propTypes = {
+  open: PropTypes.bool,
+  onClose: PropTypes.func,
+  title: PropTypes.string,
+  description: PropTypes.string,
+  onClickSave: PropTypes.func,
+  children: PropTypes.node,
+};
+
 
