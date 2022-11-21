@@ -4,40 +4,38 @@
 
 import * as React from "react";
 import PropTypes from "prop-types";
-import {Drawer as DrawerMUI} from "@mui/material";
+import { Drawer as DrawerMUI, Toolbar, Box, Typography } from "@mui/material";
 
 export const Drawer = (props) => {
-  const { open, onClose, anchor, variant, children } = props;
+  const { anchor, variant, children, open } = props;
 
   return (
-    <DrawerMUI
-      data-testid="drawer"
-      open={open}
-      onClose={onClose}
-      anchor={anchor}
-      variant={variant}
-    >
-      {children}
-    </DrawerMUI>
+    <Box zIndex={2}>
+      <DrawerMUI anchor={anchor} variant={variant} open={open}>
+        <Toolbar />
+        {/* <Box sx={{ flexGrow: 1 }}>
+          <Typography variant="h6">Drawer</Typography>
+        </Box> */}
+        {children}
+      </DrawerMUI>
+    </Box>
   );
 };
 
 /**
  * Prop Types
- *
  * @type {Object}
- * @property {Boolean} open
- * @property {Function} onClose
- * @property {String} anchor
- * @property {String} variant
- * @property {String} children
- *
+ * @property {String} anchor - anchor
+ * @property {String} variant - variant
+ * @property {String} children - children
+ * @property {Boolean} open - open
  */
 
-DrawerMUI.propTypes = {
-  open: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
-  anchor: PropTypes.string.isRequired,
-  variant: PropTypes.string.isRequired,
-  children: PropTypes.node,
+Drawer.propTypes = {
+    anchor: PropTypes.string,
+    variant: PropTypes.string,
+    open: PropTypes.bool,
+    children: PropTypes.node,
 };
+
+
