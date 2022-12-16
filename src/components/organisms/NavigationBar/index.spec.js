@@ -9,86 +9,60 @@
 
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { NavigationBar } from "./index";
+import ResponsiveAppBar from "./index";
 import { useRouter } from "next/router";
 
 jest.mock("next/router", () => ({
   useRouter: jest.fn(),
 }));
 
-describe("NavigationBar component", () => {
-  const props = {
-    title: "Test",
-    icon: <div>Icon</div>,
-    links: [
-      {
-        name: "Home",
-        href: "/",
-      },
-      {
-        name: "About",
-        href: "/about",
-      },
-      {
-        name: "Contact",
-        href: "/contact",
-      },
-    ],
+describe("Responsive App Bar component", () => {
+  const mockRouter = {
+    push: jest.fn(),
   };
 
-  it("should render title and icon", () => {
-    render(<NavigationBar {...props} />);
-    expect(screen.getByText("Test")).toBeInTheDocument();
-    expect(screen.getByText("Icon")).toBeInTheDocument();
+  beforeEach(() => {
+    useRouter.mockImplementation(() => mockRouter);
   });
 
-  it("should render links", () => {
-    render(<NavigationBar {...props} />);
-    expect(screen.getByText("Home")).toBeInTheDocument();
-    expect(screen.getByText("About")).toBeInTheDocument();
-    expect(screen.getByText("Contact")).toBeInTheDocument();
+  it("renders page, title and icon correctly", () => {
+    render(<ResponsiveAppBar />);
+    expect(screen.getByTestId("app-bar")).toBeInTheDocument();
+    expect(screen.getByTestId("app-bar-title")).toBeInTheDocument();
+    expect(screen.getByTestId("app-bar-icon")).toBeInTheDocument();
   });
 
-  it("should render menu icon when screen is small", () => {
-    Object.defineProperty(window, "innerWidth", {
-      writable: true,
-      configurable: true,
-      value: 600,
-    });
-    render(<NavigationBar {...props} />);
-    expect(screen.getByText("Menu")).toBeInTheDocument();
+  it("renders links when screen is large", () => {
+    render(<ResponsiveAppBar />);
+    expect(screen.getByTestId("app-bar-links")).toBeInTheDocument();
   });
 
-  it("should not render menu icon when screen is large", () => {
-    Object.defineProperty(window, "innerWidth", {
-      writable: true,
-      configurable: true,
-      value: 1200,
-    });
-    render(<NavigationBar {...props} />);
-    expect(screen.queryByText("Menu")).not.toBeInTheDocument();
+  it("renders menu icon when screen is small", () => {
+    render(<ResponsiveAppBar />);
+    expect(screen.getByTestId("app-bar-menu-icon")).toBeInTheDocument();
   });
 
-  it("should show links when menu icon is clicked", () => {
-    Object.defineProperty(window, "innerWidth", {
-      writable: true,
-      configurable: true,
-      value: 600,
-    });
-    render(<NavigationBar {...props} />);
-    fireEvent.click(screen.getByText("Menu"));
-    expect(screen.getByText("Home")).toBeInTheDocument();
-    expect(screen.getByText("About")).toBeInTheDocument();
-    expect(screen.getByText("Contact")).toBeInTheDocument();
+  it("renders links when menu icon is clicked", () => {
+    render(<ResponsiveAppBar />);
+    fireEvent.click(screen.getByTestId("app-bar-menu-icon"));
+    expect(screen.getByTestId("app-bar-links")).toBeInTheDocument();
   });
 
-  it("should call router.push when link is clicked", () => {
-    const router = {
-      push: jest.fn(),
-    };
-    useRouter.mockImplementation(() => router);
-    render(<NavigationBar {...props} />);
-    fireEvent.click(screen.getByText("Home"));
-    expect(router.push).toHaveBeenCalledWith("/");
+  it("calls a function when link is clicked", () => {
+    render(<ResponsiveAppBar />);
+    fireEvent.click(screen.getByTestId("app-bar-link"));
+    expect(mockRouter.push).toHaveBeenCalled();
   });
+
+  /**
+   * When clicking on the Avatar, menu should open
+   */
+  it("opens menu when avatar is clicked", () => {
+    render(<ResponsiveAppBar />);
+    fireEvent.click(screen.getByTestId("app-bar-avatar"));
+    expect(screen.getByTestId("app-bar-menu")).toBeInTheDocument();
+  })
+
+
+
 });

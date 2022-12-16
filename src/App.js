@@ -1,10 +1,11 @@
 // import logo from "./logo.svg";
 import "./App.css";
-import EducationLevel from "./components/organisms/EducationLevel";
+// import EducationLevel from "./components/organisms/EducationLevel";
 import { Typography } from "@mui/material";
 import { Provider } from "./context/Provider";
 import Experience from "./components/organisms/Experience";
 import { DropdownDialog } from "./components/organisms/DropdownDialog";
+import ResponsiveAppBar from "./components/organisms/NavigationBar";
 
 function App() {
   const options = ["Beginner", "Intermediate", "Advanced"];
@@ -28,8 +29,9 @@ function App() {
   
     </div> */}
       <Provider>
+        <ResponsiveAppBar />
         <Typography>education level</Typography>
-        <EducationLevel />
+        {/* <EducationLevel /> */}
         <Experience />
         <DropdownDialog options={options} />
       </Provider>
