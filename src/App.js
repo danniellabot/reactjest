@@ -25,7 +25,7 @@ function App() {
         >
           Learn React
         </a>
-      </header>
+      </header> 
   
     </div> */}
       <Provider>
