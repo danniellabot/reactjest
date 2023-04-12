@@ -1,23 +1,42 @@
 import React, { useState } from "react";
+import { useReactFlow } from 'reactflow'
 import NodeContextMenu from "./NodeContextMenu";
+import addNode from "./addNode";
+import deleteNodes from "./deleteNodes";
 
 function Node({ id, nodeType, status }) {
   const [isContextMenuOpen, setIsContextMenuOpen] = useState(false);
+
+  const instance = useReactFlow()
+  const allEdges = instance.getEdges()
+  const allNodes = instance.getNodes()
 
   const handleContextMenu = (event) => {
     event.preventDefault();
     setIsContextMenuOpen(true);
   };
 
-  const handleMenuItemClick = (key) => {
+  const handleMenuItemClick = async (key, nodeType) => {
+    let updatedNodes
+    let updatedEdges
     switch (key) {
       case "reattach":
         console.log("Reattach clicked!");
         break;
       case "add":
+        const newData = await addNode({ id, nodeType, status });
+        updatedNodes = allNodes.concat(newData.nodes);
+        // does concat overwrite the old nodes or add to them?
+        updatedEdges = allEdges.concat(newData.edges);
+
+       
         console.log("Add clicked!");
         break;
       case "delete":
+        const deletedNodes = await deleteNodes({ id });
+        updatedNodes = allNodes.concat(deletedNodes.nodes);
+        // does concat overwrite the old nodes or add to them?
+        updatedEdges = allEdges.concat(deletedNodes.edges);
         console.log("Delete clicked!");
         break;
       case "edit":
@@ -51,6 +70,9 @@ import React from "react";
 function NodeContextMenu({ node, onMenuItemClick }) {
   const { nodeType, status } = node;
 
+
+
+
   // Define the menu items and their respective labels and onClick handlers
   const menuItems = [
     {
@@ -58,11 +80,19 @@ function NodeContextMenu({ node, onMenuItemClick }) {
       label: "Reattach",
       nodeTypes: ["jump"],
       statuses: ["deleted"],
+      hasChildren: ["true", "false"],
       onClick: () => onMenuItemClick("reattach"),
     },
     {
       key: "add",
       label: "Add",
+      nodeTypes: ["jump", "reply"],
+      statuses: ["new", "unchanged"],
+      onClick: () => onMenuItemClick("add"),
+    },
+    {
+      key: "skip",
+      label: "Skip",
       nodeTypes: ["jump", "reply"],
       statuses: ["new", "unchanged"],
       onClick: () => onMenuItemClick("add"),
@@ -107,3 +137,11 @@ function NodeContextMenu({ node, onMenuItemClick }) {
 }
 
 export default NodeContextMenu;
+
+const axios = require("axios");
+
+const addNode = (node) => {
+  return axios.post("/api/texas/addNode", node);
+};
+
+export default addNode;
