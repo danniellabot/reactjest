@@ -1,0 +1,112 @@
+import _ from "lodash";
+const initialNodes = [
+  { id: "A", status: true },
+  { id: "B", status: true },
+  { id: "C", status: true },
+  { id: "D", status: true },
+  { id: "E", status: true },
+];
+
+const initialEdges = [
+  { id: "EdgeAB", source: "A", target: "B", status: true },
+  { id: "EdgeAC", source: "A", target: "C", status: true },
+  { id: "EdgeBD", source: "B", target: "D", status: false },
+  { id: "EdgeCD", source: "C", target: "D", status: true },
+  { id: "EdgeCE", source: "C", target: "E", status: true },
+];
+
+const copiedNodes = _.cloneDeep(initialNodes);
+const copiedEdges = _.cloneDeep(initialEdges);
+
+const deleteNode = (nodes, edges, targetNode) => {
+    let toBeDeleted = [targetNode.id];
+    let hasParent = [];
+  
+    // Identify the children of the targetNode
+    let children = edges.filter((edge) => edge.source === targetNode.id);
+  
+    for (let child of children) {
+      let parents = edges.filter(
+        (edge) => edge.target === child.target && edge.status === true
+      );
+      if (parents.length === 1) {
+        // If a child has only one parent (the target node), get the node and recursively delete it
+        let childNode = nodes.find((node) => node.id === child.target);
+        if (childNode) {
+          let result = deleteNode(nodes, edges, childNode);
+          nodes = result.nodes;
+          edges = result.edges;
+          toBeDeleted = [...toBeDeleted, ...result.toBeDeleted];
+          hasParent = [...hasParent, ...result.hasParent];
+        }
+      } else if (parents.length > 1) {
+        // If a child has more than one parent, add it to the hasParent array
+        hasParent.push(child.target);
+      }
+    }
+  
+    nodes = nodes.filter(
+      (node) => node.id !== targetNode.id && !toBeDeleted.includes(node.id)
+    );
+    edges = edges.filter(
+      (edge) => edge.source !== targetNode.id && edge.target !== targetNode.id
+    );
+  
+    return { nodes, edges, toBeDeleted, hasParent };
+  };
+  
+let result = deleteNode(
+  copiedNodes,
+  copiedEdges,
+  copiedNodes.find((node) => node.id === "C")
+);
+//console.log({copiedNodes, copiedEdges})
+
+  const updateNodes = copiedNodes.map(node => {
+    if (result.toBeDeleted.includes(node.id)) {
+        node.status = false;
+    };
+    return node;
+    });
+    //console.log(updateNodes);
+
+// for each copiedEdges, if source is in toBeDeleted but target is not in toBeDeleted, set status to false
+// for each copiedEdges, if target is in toBeDeleted but source is not in toBeDeleted, set status to false
+// if source and target are both in toBeDeleted, leaves status to true
+
+const updateEdges = copiedEdges.map((edge) => {
+  if (
+    result.toBeDeleted.includes(edge.source) &&
+    !result.toBeDeleted.includes(edge.target)
+  ) {
+    edge.status = false;
+  } else if (
+    result.toBeDeleted.includes(edge.target) &&
+    !result.toBeDeleted.includes(edge.source)
+  ) {
+    edge.status = false;
+  }
+  return edge;
+});
+
+const findDifference = (arr1, arr2, property) => {
+    const difference = {
+      newState: arr1.filter(obj1 =>
+        !arr2.some(obj2 => obj2.id === obj1.id && obj2[property] === obj1[property])
+      ),
+      prevState: arr2.filter(obj2 =>
+        !arr1.some(obj1 => obj1.id === obj2.id && obj1[property] === obj2[property])
+      )
+    };
+  
+    return difference;
+  };
+
+//console.log({result})
+//console.log({ updateEdges });
+
+const nodeState = findDifference(initialNodes, updateNodes, "status");
+const edgeState = findDifference(initialEdges, updateEdges, "status");
+
+console.log(JSON.stringify(nodeState))
+console.log(JSON.stringify(edgeState))
